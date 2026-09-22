@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROBLE — Camisas atemporales</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/cart.css">
+  <script src="scripts/whatsapp.js" defer></script>
+  <script src="scripts/carrito.js" defer></script>
+  <script src="scripts/cart.js" defer></script>
+
+  <style>
+    /* ===== Identidad ROBLE: verde hoja de roble, negro, blanco. Tomada del logo (insignia
+       circular, hoja verde + monograma "R" negro + wordmark "ROBLE" en serif). ===== */
+    :root {
+      --roble-verde: #4a7c3f;
+      --roble-verde-oscuro: #385f30;
+      --roble-negro: #14140f;
+      --roble-blanco: #ffffff;
+      --roble-crema: #f7f6f2;
+      --roble-borde: #e6e3da;
+      --roble-texto-suave: #5c5a52;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--roble-blanco); color: var(--roble-negro); font-family: 'Outfit', sans-serif; }
+    h1, h2, h3, .wordmark { font-family: 'Bitter', serif; }
+    a { color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    /* ===== Header ===== */
+    .site-header { position: sticky; top: 0; z-index: 50; background: var(--roble-blanco); border-bottom: 1px solid var(--roble-borde); }
+    .site-header-inner { max-width: 1200px; margin: 0 auto; padding: 0.9rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .marca { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; }
+    .marca img { width: 46px; height: 46px; border-radius: 50%; }
+    .marca .wordmark { font-size: 1.35rem; font-weight: 800; letter-spacing: 0.08em; color: var(--roble-negro); }
+    .site-nav { display: flex; gap: 1.6rem; align-items: center; }
+    .site-nav a { text-decoration: none; font-weight: 600; font-size: 0.9rem; color: var(--roble-negro); }
+    .site-nav a:hover { color: var(--roble-verde); }
+    @media (max-width: 640px) { .site-nav { display: none; } }
+
+    /* ===== Hero ===== */
+    .hero { position: relative; min-height: 62vh; display: flex; align-items: flex-end; overflow: hidden; background: var(--roble-negro); }
+    .hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; opacity: 0.78; }
+    .hero-contenido { position: relative; z-index: 2; padding: 3rem 1.5rem 3.5rem; color: #fff; max-width: 1200px; margin: 0 auto; width: 100%; }
+    .hero h1 { font-size: clamp(2.1rem, 5vw, 3.4rem); font-weight: 800; margin: 0 0 0.6rem; line-height: 1.08; }
+    .hero p { font-size: 1.05rem; max-width: 480px; color: #f1efe8; margin: 0 0 1.4rem; }
+    .hero .cta { display: inline-block; background: var(--roble-verde); color: #fff; text-decoration: none; font-weight: 700; padding: 0.85rem 1.6rem; border-radius: 999px; }
+    .hero .cta:hover { background: var(--roble-verde-oscuro); }
+
+    /* ===== Sección producto ===== */
+    .page { max-width: 1200px; margin: 0 auto; padding: 3.5rem 1.5rem; }
+    .linea-titulo { display: flex; align-items: baseline; gap: 0.7rem; margin: 0 0 1.6rem; }
+    .linea-titulo:not(:first-child) { margin-top: 4.5rem; padding-top: 3rem; border-top: 1px solid var(--roble-borde); }
+    .linea-titulo h2 { font-size: 1.7rem; margin: 0; }
+    .linea-titulo .genero-tag { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #fff; background: var(--roble-verde); padding: 0.3rem 0.7rem; border-radius: 999px; }
+
+    .producto { display: grid; grid-template-columns: 1.1fr 1fr; gap: 3rem; align-items: start; }
+    @media (max-width: 860px) { .producto { grid-template-columns: 1fr; gap: 2rem; } }
+
+    .galeria-wrap { position: relative; background: var(--roble-crema); border-radius: 16px; overflow: hidden; }
+    .galeria-img-box { position: relative; width: 100%; aspect-ratio: 3 / 4; }
+    .galeria-img-box img { width: 100%; height: 100%; object-fit: cover; }
+    .galeria-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border-radius: 50%; border: none; background: rgba(255,255,255,0.88); color: var(--roble-negro); font-size: 1.6rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.15); }
+    .galeria-nav:hover { background: #fff; color: var(--roble-verde); }
+    .galeria-nav.prev { left: 0.7rem; }
+    .galeria-nav.next { right: 0.7rem; }
+    .galeria-thumbs { display: flex; gap: 0.5rem; padding: 0.8rem; overflow-x: auto; }
+    .galeria-thumbs img { width: 58px; height: 58px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid transparent; opacity: 0.6; flex: 0 0 auto; }
+    .galeria-thumbs img.activa { border-color: var(--roble-verde); opacity: 1; }
+
+    .producto-info .eyebrow { text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.75rem; font-weight: 700; color: var(--roble-verde); margin: 0 0 0.4rem; }
+    .producto-info h2 { font-size: 1.9rem; margin: 0 0 0.5rem; }
+    .producto-info .precio { font-size: 1.4rem; font-weight: 700; margin: 0 0 1rem; }
+    .producto-info .desc { color: var(--roble-texto-suave); line-height: 1.6; margin: 0 0 1.5rem; }
+    .campo-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--roble-texto-suave); margin: 0 0 0.5rem; display: block; }
+    .color-row { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1.4rem; }
+    .swatch { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--roble-borde); cursor: pointer; padding: 0; position: relative; }
+    .swatch.activo { border-color: var(--roble-negro); box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--roble-negro); }
+    .color-nombre { font-size: 0.85rem; color: var(--roble-texto-suave); margin: -0.8rem 0 1.4rem; }
+    .talla-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.4rem; }
+    .talla-chip { border: 1px solid var(--roble-borde); background: #fff; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.88rem; }
+    .talla-chip.activo { border-color: var(--roble-negro); background: var(--roble-negro); color: #fff; }
+    .qty-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.6rem; }
+    .qty-row input { width: 90px; padding: 0.6rem; border: 1px solid var(--roble-borde); border-radius: 8px; font-size: 0.95rem; }
+    .btn-primario { width: 100%; background: var(--roble-negro); color: #fff; border: none; padding: 1rem; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-bottom: 0.7rem; }
+    .btn-primario:hover { background: #000; }
+    .btn-secundario { width: 100%; background: #fff; color: var(--roble-negro); border: 1px solid var(--roble-negro); padding: 0.9rem; border-radius: 10px; font-size: 0.95rem; font-weight: 700; cursor: pointer; text-decoration: none; display: block; text-align: center; }
+    .btn-secundario:hover { background: var(--roble-crema); }
+
+    /* ===== Cotizador de mayoreo ===== */
+    .mayoreo { background: var(--roble-crema); border-radius: 16px; padding: 2.2rem; margin-top: 4rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
+    @media (max-width: 860px) { .mayoreo { grid-template-columns: 1fr; } }
+    .mayoreo h3 { margin: 0 0 0.5rem; font-size: 1.4rem; }
+    .mayoreo p { color: var(--roble-texto-suave); margin: 0 0 1.2rem; line-height: 1.6; }
+    .mayoreo-tiers { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0; }
+    .mayoreo-tiers .tier { background: #fff; border: 1px solid var(--roble-borde); border-radius: 10px; padding: 0.7rem 1rem; font-size: 0.85rem; }
+    .mayoreo-tiers .tier b { display: block; color: var(--roble-verde); font-size: 1rem; }
+    .mayoreo-calc { background: #fff; border-radius: 12px; padding: 1.5rem; }
+    .mayoreo-calc .form-group { margin-bottom: 1rem; }
+    .mayoreo-calc input, .mayoreo-calc select { width: 100%; padding: 0.65rem; border: 1px solid var(--roble-borde); border-radius: 8px; font-size: 0.95rem; font-family: inherit; }
+    .mayoreo-out { background: var(--roble-crema); border-radius: 8px; padding: 0.9rem; font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem; }
+    .mayoreo-out .total { font-weight: 700; font-size: 1.05rem; border-top: 1px solid var(--roble-borde); padding-top: 0.4rem; }
+
+    /* ===== Contacto / footer ===== */
+    .contacto { margin-top: 4rem; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+    @media (max-width: 860px) { .contacto { grid-template-columns: 1fr; } }
+    .contacto h3 { font-size: 1.4rem; margin: 0 0 0.8rem; }
+    .contacto p { color: var(--roble-texto-suave); line-height: 1.6; }
+    .form-lead { display: grid; gap: 0.8rem; }
+    .form-lead input, .form-lead textarea { padding: 0.7rem; border: 1px solid var(--roble-borde); border-radius: 8px; font-family: inherit; font-size: 0.92rem; }
+    .form-lead button { background: var(--roble-negro); color: #fff; border: none; padding: 0.8rem; border-radius: 8px; font-weight: 700; cursor: pointer; }
+    footer.pie { border-top: 1px solid var(--roble-borde); margin-top: 4rem; padding: 2rem 1.5rem; text-align: center; color: var(--roble-texto-suave); font-size: 0.85rem; }
+
+    /* ===== Botón flotante de WhatsApp ===== */
+    .whatsapp-float { position: fixed; right: 18px; bottom: 18px; width: 56px; height: 56px; border-radius: 50%; background: #25D366; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(37,211,102,0.4); z-index: 140; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="marca" href="#inicio">
+        <img src="imagenes/logo-roble.jpg" alt="ROBLE">
+        <span class="wordmark">ROBLE</span>
+      </a>
+      <nav class="site-nav">
+        <a href="#camisa-oxford">Hombre</a>
+        <a href="#camisa-crop">Mujer</a>
+        <a href="#mayoreo">Al por mayor</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+      <button class="cart-fab" id="cart-fab" onclick="toggleCart()" type="button" aria-label="Abrir carrito">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 6h15l-1.5 9h-12L6 6z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="20" r="1" fill="currentColor"/><circle cx="17" cy="20" r="1" fill="currentColor"/><path d="M6 6l-2-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span class="cart-badge oculto" id="cart-count">0</span>
+      </button>
+    </div>
+  </header>
+
+  <div id="cart-panel" class="cart-panel" aria-hidden="true">
+    <div class="cart-panel-head">
+      <span>Mi carrito</span>
+      <button class="cart-panel-close" onclick="toggleCart()" type="button" aria-label="Cerrar carrito">×</button>
+    </div>
+    <div class="cart-items">
+      <div class="cart-empty">Tu carrito está vacío.</div>
+    </div>
+    <div class="cart-panel-footer"></div>
+  </div>
+
+  <section class="hero" id="inicio">
+    <img src="imagenes/hero-roble.jpg" alt="Camisas ROBLE">
+    <div class="hero-contenido">
+      <h1>Camisas atemporales,<br>hechas para durar.</h1>
+      <p>Corte clásico para hombre y crop moderno para mujer. Un color para cada ocasión — ROBLE es la camisa que no pasa de moda.</p>
+      <a class="cta" href="#camisa-oxford">Ver la colección</a>
+    </div>
+  </section>
+
+  <main class="page">
+
+    <div class="linea-titulo">
+      <h2>Camisa Oxford ROBLE</h2>
+      <span class="genero-tag">Hombre</span>
+    </div>
+    <section class="producto" id="camisa-oxford">
+      <div class="galeria-wrap">
+        <div class="galeria-img-box">
+          <img id="prod-img-oxford" src="" alt="Camisa Oxford ROBLE">
+          <button type="button" class="galeria-nav prev" onclick="moverColor('oxford',-1)" aria-label="Color anterior">‹</button>
+          <button type="button" class="galeria-nav next" onclick="moverColor('oxford',1)" aria-label="Color siguiente">›</button>
+        </div>
+        <div class="galeria-thumbs" id="galeria-thumbs-oxford"></div>
+      </div>
+
+      <div class="producto-info">
+        <p class="eyebrow">Edición clásica</p>
+        <h2>Camisa Oxford ROBLE</h2>
+        <p class="precio" id="prod-precio-oxford"></p>
+        <p class="desc">Camisa de manga larga en algodón 100%, cuello button-down y corte entallado. Un básico versátil, tan cómodo en la oficina como en la calle.</p>
+
+        <span class="campo-label">Color</span>
+        <div class="color-row" id="color-row-oxford"></div>
+        <p class="color-nombre" id="color-nombre-oxford"></p>
+
+        <span class="campo-label">Talla</span>
+        <div class="talla-row" id="talla-row-oxford"></div>
+
+        <span class="campo-label">Cantidad</span>
+        <div class="qty-row">
+          <input type="number" id="prod-qty-oxford" value="1" min="1">
+        </div>
+
+        <button type="button" class="btn-primario" onclick="agregarCamisaAlCarrito('oxford')">Agregar al carrito</button>
+        <a class="btn-secundario" id="btn-whatsapp-directo-oxford" href="#" target="_blank" rel="noopener noreferrer">Pedir por WhatsApp</a>
+      </div>
+    </section>
+
+    <div class="linea-titulo">
+      <h2>Camisa Crop ROBLE</h2>
+      <span class="genero-tag">Mujer</span>
+    </div>
+    <section class="producto" id="camisa-crop">
+      <div class="galeria-wrap">
+        <div class="galeria-img-box">
+          <img id="prod-img-crop" src="" alt="Camisa Crop ROBLE">
+          <button type="button" class="galeria-nav prev" onclick="moverColor('crop',-1)" aria-label="Color anterior">‹</button>
+          <button type="button" class="galeria-nav next" onclick="moverColor('crop',1)" aria-label="Color siguiente">›</button>
+        </div>
+        <div class="galeria-thumbs" id="galeria-thumbs-crop"></div>
+      </div>
+
+      <div class="producto-info">
+        <p class="eyebrow">Nueva colección</p>
+        <h2>Camisa Crop ROBLE</h2>
+        <p class="precio" id="prod-precio-crop"></p>
+        <p class="desc">Camisa corta (crop) de manga larga, corte moderno y entallado. Ideal con jean de tiro alto, para un look casual con actitud.</p>
+
+        <span class="campo-label">Color</span>
+        <div class="color-row" id="color-row-crop"></div>
+        <p class="color-nombre" id="color-nombre-crop"></p>
+
+        <span class="campo-label">Talla</span>
+        <div class="talla-row" id="talla-row-crop"></div>
+
+        <span class="campo-label">Cantidad</span>
+        <div class="qty-row">
+          <input type="number" id="prod-qty-crop" value="1" min="1">
+        </div>
+
+        <button type="button" class="btn-primario" onclick="agregarCamisaAlCarrito('crop')">Agregar al carrito</button>
+        <a class="btn-secundario" id="btn-whatsapp-directo-crop" href="#" target="_blank" rel="noopener noreferrer">Pedir por WhatsApp</a>
+      </div>
+    </section>
+
+    <section class="mayoreo" id="mayoreo">
+      <div>
+        <h3>¿Necesitas varias camisas?</h3>
+        <p>Descuento automático por volumen para dotación de equipos, eventos o regalos corporativos.</p>
+        <div class="mayoreo-tiers">
+          <div class="tier"><b>5%</b>desde 50 unidades</div>
+          <div class="tier"><b>10%</b>desde 100 unidades</div>
+        </div>
+      </div>
+      <div class="mayoreo-calc">
+        <div class="form-group">
+          <span class="campo-label">Producto</span>
+          <select id="mayoreo-producto" onchange="calcularMayoreo()">
+            <option value="oxford">Camisa Oxford (Hombre)</option>
+            <option value="crop">Camisa Crop (Mujer)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <span class="campo-label">Cantidad de camisas</span>
+          <input type="number" id="mayoreo-qty" value="50" min="1" oninput="calcularMayoreo()">
+        </div>
+        <div class="mayoreo-out">
+          <span id="mayoreo-unit"></span>
+          <span id="mayoreo-desc"></span>
+          <span class="total" id="mayoreo-total"></span>
+        </div>
+        <button type="button" class="btn-primario" onclick="cotizarMayoreoWhatsapp()">Cotizar por WhatsApp</button>
+      </div>
+    </section>
+
+    <section class="contacto" id="contacto">
+      <div>
+        <h3>Contáctanos</h3>
+        <p>¿Tienes dudas sobre tallas, colores o pedidos grandes? Escríbenos y te respondemos directo.</p>
+        <p>WhatsApp: <strong id="contacto-whatsapp-txt"></strong></p>
+      </div>
+      <form class="form-lead" id="form-lead" onsubmit="return enviarLead(event)">
+        <input type="text" id="lead-nombre" placeholder="Tu nombre" required>
+        <input type="tel" id="lead-telefono" placeholder="Tu teléfono" required>
+        <textarea id="lead-mensaje" rows="3" placeholder="Cuéntanos qué necesitas (opcional)"></textarea>
+        <button type="submit">Enviar</button>
+        <div id="lead-estado" style="font-size:0.85rem;color:#166534;"></div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="pie">ROBLE — Camisas atemporales.</footer>
+
+  <a class="whatsapp-float" id="whatsapp-float" href="#" target="_blank" rel="noopener noreferrer" aria-label="Abrir WhatsApp">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M17.6 6.32A7.85 7.85 0 0012.05 4a7.94 7.94 0 00-7.94 7.94c0 1.4.37 2.77 1.07 3.97L4 20l4.2-1.1a7.93 7.93 0 003.85.98 7.94 7.94 0 007.94-7.94 7.9 7.9 0 00-2.39-5.62zM12.05 18.4a6.6 6.6 0 01-3.37-.92l-.24-.14-2.5.66.67-2.44-.16-.25a6.58 6.58 0 01-1.01-3.51 6.6 6.6 0 016.61-6.6 6.56 6.56 0 014.67 1.94 6.55 6.55 0 011.93 4.67 6.6 6.6 0 01-6.6 6.6zm3.61-4.94c-.2-.1-1.17-.58-1.35-.64-.18-.07-.31-.1-.45.1-.13.2-.51.64-.63.77-.11.13-.23.15-.43.05-.2-.1-.83-.31-1.58-.98-.58-.52-.98-1.16-1.09-1.36-.11-.2-.01-.3.09-.4.09-.09.2-.23.3-.35.1-.11.13-.2.2-.33.06-.13.03-.25-.02-.35-.05-.1-.45-1.08-.61-1.48-.16-.39-.33-.33-.45-.34-.11-.01-.25-.01-.38-.01-.13 0-.35.05-.53.25-.18.2-.7.68-.7 1.66s.72 1.93.82 2.06c.1.13 1.4 2.15 3.4 3.01.48.21.85.33 1.14.43.48.15.91.13 1.26.08.38-.06 1.17-.48 1.34-.94.16-.46.16-.86.11-.94-.05-.08-.18-.13-.38-.23z"/></svg>
+  </a>
+
+  <script>
+    // ============ DATOS ============
+    // ⚠️ Placeholders: número de WhatsApp y precios de ejemplo — cámbialos por los reales.
+    const WHATSAPP_ROBLE = '573000000000';
+
+    // Dos líneas de producto (Hombre / Mujer), cada una con sus propios colores y fotos reales.
+    // Fotos: imagenes/oxford/<color>.jpg e imagenes/crop/<color>.jpg (procesadas de las fotos que
+    // envió el dueño — carpeta "Camisas Roble" de Desktop). "Terracota" en Oxford se quedó con la
+    // foto de ejemplo anterior porque no llegó una foto real de esa referencia.
+    const PRODUCTOS = {
+      oxford: {
+        codigo: 'ROBLE-OXFORD',
+        nombre: 'Camisa Oxford ROBLE',
+        precio: 89000, // COP, sin IVA — precio de ejemplo, falta el real
+        tallas: ['S', 'M', 'L', 'XL', 'XXL'],
+        colores: [
+          { nombre: 'Amarillo',      hex: '#f2cf1d', img: 'imagenes/oxford/amarillo.jpg' },
+          { nombre: 'Negro',         hex: '#111111', img: 'imagenes/oxford/negro.jpg' },
+          { nombre: 'Rosado',        hex: '#f1b8c9', img: 'imagenes/oxford/rosado.jpg' },
+          { nombre: 'Azul Rey',      hex: '#1a3fa0', img: 'imagenes/oxford/azul-rey.jpg' },
+          { nombre: 'Blanco',        hex: '#ffffff', img: 'imagenes/oxford/blanco.jpg' },
+          { nombre: 'Vinotinto',     hex: '#7c1f2b', img: 'imagenes/oxford/vinotinto.jpg' },
+          { nombre: 'Verde Bosque',  hex: '#2f5233', img: 'imagenes/oxford/verde-bosque.jpg' },
+          { nombre: 'Verde Claro',   hex: '#6ea45a', img: 'imagenes/oxford/verde-claro.jpg' },
+          { nombre: 'Beige',         hex: '#d8c7a8', img: 'imagenes/oxford/beige.jpg' },
+          { nombre: 'Petróleo',      hex: '#0f6f6a', img: 'imagenes/oxford/petroleo.jpg' },
+          { nombre: 'Morado',        hex: '#8b5cd6', img: 'imagenes/oxford/morado.jpg' },
+          { nombre: 'Rojo',          hex: '#d21f1f', img: 'imagenes/oxford/rojo.jpg' },
+          { nombre: 'Verde Oliva',   hex: '#8a9a5b', img: 'imagenes/oxford/oliva.jpg' },
+          { nombre: 'Celeste',       hex: '#a9c9e8', img: 'imagenes/oxford/celeste.jpg' },
+          { nombre: 'Café',         hex: '#4a2a24', img: 'imagenes/oxford/cafe.jpg' },
+          { nombre: 'Terracota',     hex: '#b5573f', img: 'imagenes/camisa-terracota.jpg' }
+        ]
+      },
+      crop: {
+        codigo: 'ROBLE-CROP',
+        nombre: 'Camisa Crop ROBLE',
+        precio: 89000, // COP, sin IVA — precio de ejemplo, falta el real
+        tallas: ['XS', 'S', 'M', 'L', 'XL'],
+        colores: [
+          { nombre: 'Negro',         hex: '#111111', img: 'imagenes/crop/negro.jpg' },
+          { nombre: 'Rosado',        hex: '#f1b8c9', img: 'imagenes/crop/rosado.jpg' },
+          { nombre: 'Azul Rey',      hex: '#1a3fa0', img: 'imagenes/crop/azul-rey.jpg' },
+          { nombre: 'Vinotinto',     hex: '#7c1f2b', img: 'imagenes/crop/vinotinto.jpg' },
+          { nombre: 'Verde Bosque',  hex: '#2f5233', img: 'imagenes/crop/verde-bosque.jpg' },
+          { nombre: 'Verde Claro',   hex: '#6ea45a', img: 'imagenes/crop/verde-claro.jpg' },
+          { nombre: 'Beige',         hex: '#d8c7a8', img: 'imagenes/crop/beige.jpg' },
+          { nombre: 'Petróleo',      hex: '#0f6f6a', img: 'imagenes/crop/petroleo.jpg' },
+          { nombre: 'Rojo',          hex: '#d21f1f', img: 'imagenes/crop/rojo.jpg' },
+          { nombre: 'Celeste',       hex: '#a9c9e8', img: 'imagenes/crop/celeste.jpg' },
+          { nombre: 'Café',         hex: '#4a2a24', img: 'imagenes/crop/cafe.jpg' }
+        ]
+      }
+    };
+
+    // Estado independiente por línea de producto (color/talla elegidos).
+    const estado = {
+      oxford: { colorIdx: 0, tallaActiva: 'M' },
+      crop:   { colorIdx: 0, tallaActiva: 'M' }
+    };
+
+    function formatCOP(n) { return '$' + Math.round(n).toLocaleString('es-CO') + ' COP'; }
+
+    function renderColores(key) {
+      const p = PRODUCTOS[key], est = estado[key];
+      const row = document.getElementById('color-row-' + key);
+      row.innerHTML = p.colores.map((c, i) =>
+        '<button type="button" class="swatch' + (i === est.colorIdx ? ' activo' : '') + '" style="background:' + c.hex + (c.hex === '#ffffff' ? ';border-color:#ccc' : '') + '" onclick="elegirColor(\'' + key + '\',' + i + ')" aria-label="' + c.nombre + '"></button>'
+      ).join('');
+      document.getElementById('color-nombre-' + key).textContent = p.colores[est.colorIdx].nombre;
+    }
+
+    function renderTallas(key) {
+      const p = PRODUCTOS[key], est = estado[key];
+      const row = document.getElementById('talla-row-' + key);
+      row.innerHTML = p.tallas.map((t) =>
+        '<button type="button" class="talla-chip' + (t === est.tallaActiva ? ' activo' : '') + '" onclick="elegirTalla(\'' + key + '\',\'' + t + '\')">' + t + '</button>'
+      ).join('');
+    }
+
+    function renderGaleria(key) {
+      const p = PRODUCTOS[key], est = estado[key];
+      const imgEl = document.getElementById('prod-img-' + key);
+      imgEl.src = p.colores[est.colorIdx].img;
+      imgEl.alt = p.nombre + ' color ' + p.colores[est.colorIdx].nombre;
+      const thumbs = document.getElementById('galeria-thumbs-' + key);
+      thumbs.innerHTML = p.colores.map((c, i) =>
+        '<img class="' + (i === est.colorIdx ? 'activa' : '') + '" src="' + c.img + '" alt="' + c.nombre + '" onclick="elegirColor(\'' + key + '\',' + i + ')">'
+      ).join('');
+    }
+
+    function elegirColor(key, i) {
+      estado[key].colorIdx = i;
+      renderColores(key);
+      renderGaleria(key);
+      actualizarLinksWhatsapp(key);
+    }
+    function moverColor(key, delta) {
+      const n = PRODUCTOS[key].colores.length;
+      estado[key].colorIdx = ((estado[key].colorIdx + delta) % n + n) % n;
+      renderColores(key);
+      renderGaleria(key);
+      actualizarLinksWhatsapp(key);
+    }
+    function elegirTalla(key, t) {
+      estado[key].tallaActiva = t;
+      renderTallas(key);
+      actualizarLinksWhatsapp(key);
+    }
+
+    function agregarCamisaAlCarrito(key) {
+      const p = PRODUCTOS[key], est = estado[key];
+      const qty = parseInt(document.getElementById('prod-qty-' + key).value, 10) || 1;
+      const color = p.colores[est.colorIdx];
+      window.addToCart({
+        codigo: p.codigo,
+        nombre: p.nombre,
+        img: color.img,
+        talla: est.tallaActiva,
+        color: color.nombre,
+        precioUnitario: p.precio,
+        cantidad: qty
+      });
+      if (typeof toggleCart === 'function') toggleCart(true);
+    }
+
+    function actualizarLinksWhatsapp(key) {
+      const p = PRODUCTOS[key], est = estado[key];
+      const color = p.colores[est.colorIdx];
+      const qty = parseInt(document.getElementById('prod-qty-' + key).value, 10) || 1;
+      const texto = 'Hola, quiero pedir la ' + p.nombre + ' color ' + color.nombre + ', talla ' + est.tallaActiva + ', cantidad ' + qty + '.';
+      document.getElementById('btn-whatsapp-directo-' + key).href = 'https://wa.me/' + WHATSAPP_ROBLE + '?text=' + encodeURIComponent(texto);
+    }
+
+    // ============ COTIZADOR DE MAYOREO ============
+    function calcularMayoreo() {
+      const key = document.getElementById('mayoreo-producto').value;
+      const precio = PRODUCTOS[key].precio;
+      const qty = parseInt(document.getElementById('mayoreo-qty').value, 10) || 1;
+      const desc = qty >= 100 ? 0.10 : qty >= 50 ? 0.05 : 0;
+      const subtotal = precio * qty;
+      const total = subtotal * (1 - desc);
+      document.getElementById('mayoreo-unit').textContent = 'Precio unitario: ' + formatCOP(precio);
+      document.getElementById('mayoreo-desc').textContent = desc > 0
+        ? 'Descuento por volumen: ' + Math.round(desc * 100) + '% (-' + formatCOP(subtotal * desc) + ')'
+        : 'Agrega 50 o más para obtener descuento por volumen.';
+      document.getElementById('mayoreo-total').textContent = 'Total estimado: ' + formatCOP(total);
+    }
+
+    function cotizarMayoreoWhatsapp() {
+      const key = document.getElementById('mayoreo-producto').value;
+      const p = PRODUCTOS[key];
+      const qty = parseInt(document.getElementById('mayoreo-qty').value, 10) || 1;
+      const desc = qty >= 100 ? 0.10 : qty >= 50 ? 0.05 : 0;
+      const total = p.precio * qty * (1 - desc);
+      const texto = mensajeDesdeCotizacion({ nombre: p.nombre, cantidad: qty, total, formatMoneda: formatCOP });
+      abrirWhatsapp(WHATSAPP_ROBLE, texto);
+    }
+
+    // ============ FORMULARIO DE CONTACTO ============
+    function enviarLead(ev) {
+      ev.preventDefault();
+      const nombre = document.getElementById('lead-nombre').value;
+      const telefono = document.getElementById('lead-telefono').value;
+      const mensaje = document.getElementById('lead-mensaje').value;
+      const estadoEl = document.getElementById('lead-estado');
+      fetch('/api/lead', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, telefono, mensaje })
+      }).then((r) => {
+        if (!r.ok) throw new Error();
+        estadoEl.textContent = '¡Listo! Te contactamos pronto.';
+        document.getElementById('form-lead').reset();
+      }).catch(() => {
+        const texto = 'Hola, soy ' + nombre + ' (' + telefono + '). ' + (mensaje || '');
+        window.location.href = 'https://wa.me/' + WHATSAPP_ROBLE + '?text=' + encodeURIComponent(texto);
+      });
+      return false;
+    }
+
+    // ============ ARRANQUE ============
+    ['oxford', 'crop'].forEach((key) => {
+      renderColores(key);
+      renderTallas(key);
+      renderGaleria(key);
+      document.getElementById('prod-precio-' + key).textContent = formatCOP(PRODUCTOS[key].precio) + ' / unidad';
+      actualizarLinksWhatsapp(key);
+      document.getElementById('prod-qty-' + key).addEventListener('input', () => actualizarLinksWhatsapp(key));
+    });
+    document.getElementById('whatsapp-float').href = 'https://wa.me/' + WHATSAPP_ROBLE;
+    document.getElementById('contacto-whatsapp-txt').textContent = '+' + WHATSAPP_ROBLE;
+    calcularMayoreo();
+  </script>
+</body>
+</html>

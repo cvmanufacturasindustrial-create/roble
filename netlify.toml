@@ -1,0 +1,12 @@
+# ROBLE — proyecto independiente. Netlify es hosting estático (no corre app.js): el
+# formulario de contacto (/api/lead) necesita el servidor real (node app.js) para guardar en
+# datos/leads-recibidos.csv; en Netlify cae automáticamente al flujo de WhatsApp, por diseño.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 404
+
+[[headers]]
+  for = "/imagenes/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
