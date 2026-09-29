@@ -52,8 +52,38 @@
 
     /* ===== Sección producto ===== */
     .page { max-width: 1200px; margin: 0 auto; padding: 3.5rem 1.5rem; }
+
+    /* ===== Home del catálogo: solo 2 recuadros (Hombre / Mujer) =====
+       Vista por defecto de la página principal (2026-09-29): reemplaza la visualización directa
+       de colores/tallas/detalle. Al hacer clic en un recuadro, rutear() (ver <script> al final)
+       oculta este bloque y muestra el .producto-detalle correspondiente, reutilizando el mismo
+       diseño y lógica de colores/tallas que ya existía -- no se tocó esa parte. */
+    .catalogo-home { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    @media (max-width: 720px) { .catalogo-home { grid-template-columns: 1fr; } }
+    .categoria-card {
+      display: block; position: relative; border-radius: 16px; overflow: hidden;
+      background: var(--roble-crema); border: 1px solid var(--roble-borde); text-decoration: none;
+      color: inherit; transition: box-shadow 0.25s, transform 0.25s;
+    }
+    .categoria-card:hover { box-shadow: 0 14px 34px rgba(20,20,15,0.15); transform: translateY(-3px); }
+    .categoria-card img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; background: var(--roble-crema); }
+    .categoria-card .categoria-info { padding: 1.3rem 1.5rem; }
+    .categoria-card h2 { font-size: 1.5rem; margin: 0 0 0.4rem; }
+    .categoria-card .categoria-cta { font-size: 0.82rem; font-weight: 700; color: var(--roble-verde); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* Vista de detalle (una línea de producto completa: galería + colores + tallas + carrito):
+       oculta por defecto, solo se muestra la que corresponde al recuadro que se haya elegido. */
+    /* scroll-margin-top: el header es sticky (~64px) -- sin esto, rutear() (ver <script> al
+       final) deja el link "Volver a categorías" tapado justo debajo del header al saltar aquí. */
+    .producto-detalle { display: none; scroll-margin-top: 90px; }
+    .producto-detalle.activa { display: block; }
+    .volver-link {
+      display: inline-flex; align-items: center; gap: 0.4rem; margin-bottom: 1.8rem;
+      font-weight: 700; font-size: 0.88rem; color: var(--roble-verde); text-decoration: none;
+    }
+    .volver-link:hover { color: var(--roble-verde-oscuro); }
+
     .linea-titulo { display: flex; align-items: baseline; gap: 0.7rem; margin: 0 0 1.6rem; }
-    .linea-titulo:not(:first-child) { margin-top: 4.5rem; padding-top: 3rem; border-top: 1px solid var(--roble-borde); }
     .linea-titulo h2 { font-size: 1.7rem; margin: 0; }
     .linea-titulo .genero-tag { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #fff; background: var(--roble-verde); padding: 0.3rem 0.7rem; border-radius: 999px; }
 
@@ -155,85 +185,112 @@
     <div class="hero-contenido">
       <h1>Camisas atemporales,<br>hechas para durar.</h1>
       <p>Corte clásico para hombre y crop moderno para mujer. Un color para cada ocasión — ROBLE es la camisa que no pasa de moda.</p>
-      <a class="cta" href="#camisa-oxford">Ver la colección</a>
+      <a class="cta" href="#catalogo">Ver la colección</a>
     </div>
   </section>
 
   <main class="page">
 
-    <div class="linea-titulo">
-      <h2>Camisa Oxford ROBLE</h2>
-      <span class="genero-tag">Hombre</span>
-    </div>
-    <section class="producto" id="camisa-oxford">
-      <div class="galeria-wrap">
-        <div class="galeria-img-box">
-          <img id="prod-img-oxford" src="" alt="Camisa Oxford ROBLE">
-          <button type="button" class="galeria-nav prev" onclick="moverColor('oxford',-1)" aria-label="Color anterior">‹</button>
-          <button type="button" class="galeria-nav next" onclick="moverColor('oxford',1)" aria-label="Color siguiente">›</button>
+    <!-- Home del catálogo: únicamente estos 2 recuadros a la vista, sin colores/tallas/detalle
+         directo (ver CSS .catalogo-home y rutear() en el <script> final). Las imágenes se
+         completan por JS con la primera foto de cada línea de producto (PRODUCTOS.oxford/crop),
+         reutilizando los mismos datos en vez de duplicarlos a mano. -->
+    <div class="catalogo-home" id="catalogo">
+      <a class="categoria-card" href="#camisa-oxford">
+        <img id="cat-card-img-oxford" src="" alt="Camisas de Hombre ROBLE">
+        <div class="categoria-info">
+          <h2>Camisas de Hombre</h2>
+          <span class="categoria-cta">Ver colores y tallas →</span>
         </div>
-        <div class="galeria-thumbs" id="galeria-thumbs-oxford"></div>
-      </div>
+      </a>
+      <a class="categoria-card" href="#camisa-crop">
+        <img id="cat-card-img-crop" src="" alt="Camisas de Mujer ROBLE">
+        <div class="categoria-info">
+          <h2>Camisas de Mujer</h2>
+          <span class="categoria-cta">Ver colores y tallas →</span>
+        </div>
+      </a>
+    </div>
 
-      <div class="producto-info">
-        <p class="eyebrow">Edición clásica</p>
+    <div class="producto-detalle" id="camisa-oxford">
+      <a class="volver-link" href="#catalogo">← Volver a categorías</a>
+      <div class="linea-titulo">
         <h2>Camisa Oxford ROBLE</h2>
-        <p class="precio" id="prod-precio-oxford"></p>
-        <p class="desc">Camisa de manga larga en algodón 100%, cuello button-down y corte entallado. Un básico versátil, tan cómodo en la oficina como en la calle.</p>
-
-        <span class="campo-label">Color</span>
-        <div class="color-row" id="color-row-oxford"></div>
-        <p class="color-nombre" id="color-nombre-oxford"></p>
-
-        <span class="campo-label">Talla</span>
-        <div class="talla-row" id="talla-row-oxford"></div>
-
-        <span class="campo-label">Cantidad</span>
-        <div class="qty-row">
-          <input type="number" id="prod-qty-oxford" value="1" min="1">
+        <span class="genero-tag">Hombre</span>
+      </div>
+      <section class="producto">
+        <div class="galeria-wrap">
+          <div class="galeria-img-box">
+            <img id="prod-img-oxford" src="" alt="Camisa Oxford ROBLE">
+            <button type="button" class="galeria-nav prev" onclick="moverColor('oxford',-1)" aria-label="Color anterior">‹</button>
+            <button type="button" class="galeria-nav next" onclick="moverColor('oxford',1)" aria-label="Color siguiente">›</button>
+          </div>
+          <div class="galeria-thumbs" id="galeria-thumbs-oxford"></div>
         </div>
 
-        <button type="button" class="btn-primario" onclick="agregarCamisaAlCarrito('oxford')">Agregar al carrito</button>
-        <a class="btn-secundario" id="btn-whatsapp-directo-oxford" href="#" target="_blank" rel="noopener noreferrer">Pedir por WhatsApp</a>
-      </div>
-    </section>
+        <div class="producto-info">
+          <p class="eyebrow">Edición clásica</p>
+          <h2>Camisa Oxford ROBLE</h2>
+          <p class="precio" id="prod-precio-oxford"></p>
+          <p class="desc">Camisa de manga larga en algodón 100%, cuello button-down y corte entallado. Un básico versátil, tan cómodo en la oficina como en la calle.</p>
 
-    <div class="linea-titulo">
-      <h2>Camisa Crop ROBLE</h2>
-      <span class="genero-tag">Mujer</span>
+          <span class="campo-label">Color</span>
+          <div class="color-row" id="color-row-oxford"></div>
+          <p class="color-nombre" id="color-nombre-oxford"></p>
+
+          <span class="campo-label">Talla</span>
+          <div class="talla-row" id="talla-row-oxford"></div>
+
+          <span class="campo-label">Cantidad</span>
+          <div class="qty-row">
+            <input type="number" id="prod-qty-oxford" value="1" min="1">
+          </div>
+
+          <button type="button" class="btn-primario" onclick="agregarCamisaAlCarrito('oxford')">Agregar al carrito</button>
+          <a class="btn-secundario" id="btn-whatsapp-directo-oxford" href="#" target="_blank" rel="noopener noreferrer">Pedir por WhatsApp</a>
+        </div>
+      </section>
     </div>
-    <section class="producto" id="camisa-crop">
-      <div class="galeria-wrap">
-        <div class="galeria-img-box">
-          <img id="prod-img-crop" src="" alt="Camisa Crop ROBLE">
-          <button type="button" class="galeria-nav prev" onclick="moverColor('crop',-1)" aria-label="Color anterior">‹</button>
-          <button type="button" class="galeria-nav next" onclick="moverColor('crop',1)" aria-label="Color siguiente">›</button>
-        </div>
-        <div class="galeria-thumbs" id="galeria-thumbs-crop"></div>
-      </div>
 
-      <div class="producto-info">
-        <p class="eyebrow">Nueva colección</p>
+    <div class="producto-detalle" id="camisa-crop">
+      <a class="volver-link" href="#catalogo">← Volver a categorías</a>
+      <div class="linea-titulo">
         <h2>Camisa Crop ROBLE</h2>
-        <p class="precio" id="prod-precio-crop"></p>
-        <p class="desc">Camisa corta (crop) de manga larga, corte moderno y entallado. Ideal con jean de tiro alto, para un look casual con actitud.</p>
-
-        <span class="campo-label">Color</span>
-        <div class="color-row" id="color-row-crop"></div>
-        <p class="color-nombre" id="color-nombre-crop"></p>
-
-        <span class="campo-label">Talla</span>
-        <div class="talla-row" id="talla-row-crop"></div>
-
-        <span class="campo-label">Cantidad</span>
-        <div class="qty-row">
-          <input type="number" id="prod-qty-crop" value="1" min="1">
+        <span class="genero-tag">Mujer</span>
+      </div>
+      <section class="producto">
+        <div class="galeria-wrap">
+          <div class="galeria-img-box">
+            <img id="prod-img-crop" src="" alt="Camisa Crop ROBLE">
+            <button type="button" class="galeria-nav prev" onclick="moverColor('crop',-1)" aria-label="Color anterior">‹</button>
+            <button type="button" class="galeria-nav next" onclick="moverColor('crop',1)" aria-label="Color siguiente">›</button>
+          </div>
+          <div class="galeria-thumbs" id="galeria-thumbs-crop"></div>
         </div>
 
-        <button type="button" class="btn-primario" onclick="agregarCamisaAlCarrito('crop')">Agregar al carrito</button>
-        <a class="btn-secundario" id="btn-whatsapp-directo-crop" href="#" target="_blank" rel="noopener noreferrer">Pedir por WhatsApp</a>
-      </div>
-    </section>
+        <div class="producto-info">
+          <p class="eyebrow">Nueva colección</p>
+          <h2>Camisa Crop ROBLE</h2>
+          <p class="precio" id="prod-precio-crop"></p>
+          <p class="desc">Camisa corta (crop) de manga larga, corte moderno y entallado. Ideal con jean de tiro alto, para un look casual con actitud.</p>
+
+          <span class="campo-label">Color</span>
+          <div class="color-row" id="color-row-crop"></div>
+          <p class="color-nombre" id="color-nombre-crop"></p>
+
+          <span class="campo-label">Talla</span>
+          <div class="talla-row" id="talla-row-crop"></div>
+
+          <span class="campo-label">Cantidad</span>
+          <div class="qty-row">
+            <input type="number" id="prod-qty-crop" value="1" min="1">
+          </div>
+
+          <button type="button" class="btn-primario" onclick="agregarCamisaAlCarrito('crop')">Agregar al carrito</button>
+          <a class="btn-secundario" id="btn-whatsapp-directo-crop" href="#" target="_blank" rel="noopener noreferrer">Pedir por WhatsApp</a>
+        </div>
+      </section>
+    </div>
 
     <section class="mayoreo" id="mayoreo">
       <div>
@@ -467,6 +524,31 @@
       return false;
     }
 
+    // ============ HOME DEL CATÁLOGO: solo 2 recuadros, navegación por hash ============
+    // La vista de detalle completa (galería/colores/tallas/carrito) de cada línea de producto
+    // NO se tocó -- sigue siendo exactamente la misma, solo que ahora empieza oculta
+    // (.producto-detalle sin la clase .activa) y rutear() decide cuál mostrar según el hash de
+    // la URL. Esto reutiliza los mismos ids (#camisa-oxford / #camisa-crop) que ya usaban el
+    // menú del header y el CTA del hero, así que esos enlaces ya funcionan sin tocarlos.
+    const VISTAS_DETALLE = ['camisa-oxford', 'camisa-crop'];
+
+    function rutear() {
+      const hash = location.hash.replace('#', '');
+      const esDetalle = VISTAS_DETALLE.includes(hash);
+      document.getElementById('catalogo').style.display = esDetalle ? 'none' : '';
+      VISTAS_DETALLE.forEach((id) => {
+        document.getElementById(id).classList.toggle('activa', id === hash);
+      });
+      if (esDetalle) {
+        // El navegador intenta saltar al ancla ANTES de que este script la haga visible (estaba
+        // en display:none), así que el scroll se hace a mano una vez que ya se muestra.
+        requestAnimationFrame(() => {
+          document.getElementById(hash).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      }
+    }
+    window.addEventListener('hashchange', rutear);
+
     // ============ ARRANQUE ============
     ['oxford', 'crop'].forEach((key) => {
       renderColores(key);
@@ -475,10 +557,14 @@
       document.getElementById('prod-precio-' + key).textContent = formatCOP(PRODUCTOS[key].precio) + ' / unidad';
       actualizarLinksWhatsapp(key);
       document.getElementById('prod-qty-' + key).addEventListener('input', () => actualizarLinksWhatsapp(key));
+      // Imagen de los recuadros de categoría: la primera foto de cada línea de producto, misma
+      // fuente de datos que la galería de detalle (sin duplicar rutas de imágenes a mano).
+      document.getElementById('cat-card-img-' + key).src = PRODUCTOS[key].colores[0].img;
     });
     document.getElementById('whatsapp-float').href = 'https://wa.me/' + WHATSAPP_ROBLE;
     document.getElementById('contacto-whatsapp-txt').textContent = '+' + WHATSAPP_ROBLE;
     calcularMayoreo();
+    rutear(); // vista inicial: detalle si la URL ya trae #camisa-oxford/#camisa-crop, si no, los 2 recuadros
   </script>
 </body>
 </html>
