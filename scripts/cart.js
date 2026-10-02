@@ -3,9 +3,8 @@
    pago en línea con Mercado Pago Checkout Pro (solo si el servidor tiene MP_ACCESS_TOKEN) o
    pedido por WhatsApp. El precio que se cobra lo calcula el servidor (config/precios.json). */
 (function () {
-  // ⚠️ Placeholder: reemplaza por el número real de WhatsApp de ROBLE (código de país + número,
-  // sin espacios ni signos, ej. 573001234567).
-  const WHATSAPP = '573000000000';
+  // WhatsApp de ROBLE (código de país + número, sin espacios). También en index.html (WHATSAPP_ROBLE).
+  const WHATSAPP = '573181950928';
   const CLAVE_CARRITO = 'cart_roble';
   const CLAVE_ENTREGA = 'datos_entrega_roble';
 

@@ -24,17 +24,14 @@ PORT=3005 npm start   # otro puerto si lo necesitas
 - En el plan gratis el disco se borra en cada deploy: `datos/leads-recibidos.csv` no es
   permanente; el formulario cae a WhatsApp si el servidor no responde.
 
-## ⚠️ Antes de publicarlo, todavía faltan 3 datos reales
+## ⚠️ Antes de publicarlo, todavía faltan los precios reales
 
-Las fotos reales ya están puestas para las dos líneas. Falta:
-
-1. **Número de WhatsApp**: está como marcador de posición (`573000000000`) en dos archivos —
-   `scripts/cart.js` (línea con `const WHATSAPP`) e `index.html` (línea con
-   `const WHATSAPP_ROBLE`). Reemplázalo por el número real en ambos lados.
-2. **Precio Camisa Oxford**: `PRODUCTOS.oxford.precio` en `index.html` está en `89000`
-   (COP, sin IVA) como ejemplo. Cámbialo por el precio real.
-3. **Precio Camisa Crop**: `PRODUCTOS.crop.precio` en `index.html`, mismo placeholder `89000` —
-   es un producto nuevo, probablemente con un precio distinto al de la Oxford.
+- **WhatsApp**: +57 318 195 0928 (`scripts/cart.js` → `WHATSAPP` e `index.html` →
+  `WHATSAPP_ROBLE`).
+- **Precios**: fuente única en `config/precios.json` (la página y el cobro de Mercado Pago lo
+  leen). Oxford y Crop siguen en `89000` de ejemplo — cámbialos por los reales.
+- **Mercado Pago**: el Access Token va SOLO en Render → Environment (`MP_ACCESS_TOKEN`), nunca
+  en el código. Ver `.env.example`.
 
 ### Fotos ya cargadas — dos líneas de producto
 
