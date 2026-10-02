@@ -1,6 +1,9 @@
 # Render Blueprint de ROBLE: un Web Service de Node que corre app.js (npm start).
-# En Render: New → Blueprint → elegir el repo "roble". El dominio propio se agrega después
-# en Settings → Custom Domains del servicio.
+# En Render: New → Blueprint → elegir el repo "roble". El dominio propio se agrega en
+# Settings → Custom Domains del servicio.
+#
+# ⚠️ Nunca escribas llaves aquí (este archivo está en GitHub). Las marcadas con
+# `sync: false` se llenan a mano en Render → servicio → Environment.
 services:
   - type: web
     name: roble
@@ -9,10 +12,10 @@ services:
     buildCommand: npm install
     startCommand: npm start
     autoDeploy: true
-      envVars:
-          - key: SITIO_URL
-                value: https://camisainforoble.com
-                    - key: MP_ACCESS_TOKEN
-                          value: APP_USR-4889999079689323-021716-f1ffe99d6a2005dcd2cfa1c6c4209955-3088343606
-                              - key: MP_WEBHOOK_SECRET
-                                    value: ${MP_WEBHOOK_SECRET}
+    envVars:
+      - key: SITIO_URL
+        value: https://camisainforoble.com
+      - key: MP_ACCESS_TOKEN
+        sync: false
+      - key: MP_WEBHOOK_SECRET
+        sync: false
