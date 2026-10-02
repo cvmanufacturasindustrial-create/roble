@@ -173,6 +173,16 @@
   window.Cart = Cart;
   window.toggleCart = function (forzarAbierto) { Cart.alternar(forzarAbierto); };
   window.addToCart = function (item) { return Cart.agregar(item); };
+  // "Comprar ya": abre el carrito y lleva al primer dato de entrega vacío (o al botón de pago).
+  window.irAPagar = function () {
+    Cart.alternar(true);
+    requestAnimationFrame(() => {
+      const vacio = ['entrega-nombre', 'entrega-telefono', 'entrega-direccion']
+        .map((id) => document.getElementById(id)).find((el) => el && !el.value.trim());
+      const destino = vacio || document.getElementById('btn-pagar-mp');
+      if (destino) { destino.scrollIntoView({ block: 'center' }); destino.focus(); }
+    });
+  };
 
   fetch('/api/pago/mercadopago/config').then((r) => r.json())
     .then((c) => { pagoMPDisponible = !!c.configurada; Cart.render(); })

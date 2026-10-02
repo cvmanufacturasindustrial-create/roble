@@ -107,6 +107,11 @@
     .qs-agregar { margin-top: auto; width: 100%; border: none; background: var(--roble-verde); color: #fff; font: inherit; font-weight: 700; padding: 0.7rem; border-radius: 10px; cursor: pointer; transition: background 0.2s; }
     .qs-agregar:hover { background: var(--roble-verde-oscuro); }
     .qs-agregar.hecho { background: var(--roble-negro); }
+    /* "Comprar ya": agrega la camisa y abre el carrito directo en el paso de pago (Mercado Pago). */
+    .qs-comprar { width: 100%; border: 1px solid #009ee3; background: #fff; color: #0079b0; font: inherit; font-weight: 700; padding: 0.6rem; border-radius: 10px; cursor: pointer; transition: background 0.2s, color 0.2s; }
+    .qs-comprar:hover { background: #009ee3; color: #fff; }
+    .btn-comprar-ya { width: 100%; background: #009ee3; color: #fff; border: none; padding: 1rem; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-bottom: 0.7rem; font-family: inherit; }
+    .btn-comprar-ya:hover { background: #0086c3; }
 
     /* Aviso al agregar al carrito (en vez de abrir el panel en cada clic) */
     .toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 140%); background: var(--roble-negro); color: #fff; padding: 0.75rem 0.8rem 0.75rem 1.1rem; border-radius: 14px; display: flex; align-items: center; gap: 0.9rem; z-index: 160; box-shadow: 0 12px 30px rgba(0,0,0,0.25); transition: transform 0.35s cubic-bezier(.2,.9,.3,1.2); font-size: 0.9rem; max-width: calc(100vw - 32px); }
@@ -302,6 +307,7 @@
             <input type="number" id="prod-qty-oxford" value="1" min="1">
           </div>
 
+          <button type="button" class="btn-comprar-ya" onclick="comprarAhoraDetalle('oxford')">Comprar ahora · pago en línea</button>
           <button type="button" class="btn-primario" onclick="agregarCamisaAlCarrito('oxford')">Agregar al carrito</button>
           <a class="btn-secundario" id="btn-whatsapp-directo-oxford" href="#" target="_blank" rel="noopener noreferrer">Pedir por WhatsApp</a>
         </div>
@@ -342,6 +348,7 @@
             <input type="number" id="prod-qty-crop" value="1" min="1">
           </div>
 
+          <button type="button" class="btn-comprar-ya" onclick="comprarAhoraDetalle('crop')">Comprar ahora · pago en línea</button>
           <button type="button" class="btn-primario" onclick="agregarCamisaAlCarrito('crop')">Agregar al carrito</button>
           <a class="btn-secundario" id="btn-whatsapp-directo-crop" href="#" target="_blank" rel="noopener noreferrer">Pedir por WhatsApp</a>
         </div>
@@ -556,6 +563,7 @@
               '<button type="button" class="qs-talla' + (t === talla ? ' activo' : '') + '" onclick="elegirTallaRapida(\'' + clave + '\',\'' + t + '\')">' + t + '</button>'
             ).join('') + '</div>' +
             '<button type="button" class="qs-agregar" onclick="agregarRapido(\'' + lineaTienda + '\',' + i + ',this)">Agregar al carrito</button>' +
+            '<button type="button" class="qs-comprar" onclick="comprarYa(\'' + lineaTienda + '\',' + i + ')">Comprar ya</button>' +
           '</div>' +
         '</article>';
       }).join('');
@@ -578,6 +586,20 @@
       boton.classList.add('hecho');
       setTimeout(() => { boton.textContent = 'Agregar al carrito'; boton.classList.remove('hecho'); }, 1600);
       avisarAgregado(p.nombre + ' · ' + color.nombre + ' · talla ' + talla);
+    }
+
+    // Comprar ya / Comprar ahora: agrega y abre el carrito en los datos de entrega + pago en línea.
+    function comprarYa(key, i) {
+      const p = PRODUCTOS[key], color = p.colores[i];
+      const talla = tallaRapida[key + '-' + i] || 'M';
+      window.addToCart({ codigo: p.codigo, nombre: p.nombre, img: color.img, talla, color: color.nombre, precioUnitario: p.precio, cantidad: 1 });
+      irAPagar();
+    }
+    function comprarAhoraDetalle(key) {
+      const p = PRODUCTOS[key], est = estado[key], color = p.colores[est.colorIdx];
+      const qty = parseInt(document.getElementById('prod-qty-' + key).value, 10) || 1;
+      window.addToCart({ codigo: p.codigo, nombre: p.nombre, img: color.img, talla: est.tallaActiva, color: color.nombre, precioUnitario: p.precio, cantidad: qty });
+      irAPagar();
     }
 
     function mostrarLinea(key) {
