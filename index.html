@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ROBLE — Camisas atemporales</title>
+  <link rel="icon" href="imagenes/logo-roble.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -41,40 +42,89 @@
     .site-nav a:hover { color: var(--roble-verde); }
     @media (max-width: 640px) { .site-nav { display: none; } }
 
-    /* ===== Hero ===== */
-    .hero { position: relative; min-height: 62vh; display: flex; align-items: flex-end; overflow: hidden; background: var(--roble-negro); }
-    .hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; opacity: 0.78; }
+    /* ===== Hero: fotos reales de la colección Crop rotando de fondo =====
+       3 paneles verticales (1 en móvil); cada panel cambia de foto con fundido, escalonado para
+       que nunca cambien los tres a la vez. Ver iniciarHero() en el <script>. */
+    .hero { position: relative; min-height: 80vh; display: flex; align-items: center; overflow: hidden; background: var(--roble-negro); }
+    .hero-fondo { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(3, 1fr); }
+    .hero-panel { position: relative; overflow: hidden; }
+    .hero-panel img {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 25%;
+      opacity: 0; transform: scale(1.06); transition: opacity 1.4s ease, transform 7s ease-out;
+    }
+    .hero-panel img.visible { opacity: 1; transform: scale(1); }
+    .hero::after {   /* velo para que el texto se lea sobre cualquier foto */
+      content: ''; position: absolute; inset: 0; z-index: 1;
+      background: linear-gradient(90deg, rgba(20,20,15,0.82) 0%, rgba(20,20,15,0.55) 45%, rgba(20,20,15,0.12) 100%);
+    }
+    @media (max-width: 760px) {
+      .hero { min-height: 86vh; align-items: flex-end; }
+      .hero-fondo { grid-template-columns: 1fr; }
+      .hero-panel:not(:first-child) { display: none; }
+      .hero::after { background: linear-gradient(0deg, rgba(20,20,15,0.88) 0%, rgba(20,20,15,0.45) 55%, rgba(20,20,15,0.1) 100%); }
+    }
     .hero-contenido { position: relative; z-index: 2; padding: 3rem 1.5rem 3.5rem; color: #fff; max-width: 1200px; margin: 0 auto; width: 100%; }
-    .hero h1 { font-size: clamp(2.1rem, 5vw, 3.4rem); font-weight: 800; margin: 0 0 0.6rem; line-height: 1.08; }
-    .hero p { font-size: 1.05rem; max-width: 480px; color: #f1efe8; margin: 0 0 1.4rem; }
-    .hero .cta { display: inline-block; background: var(--roble-verde); color: #fff; text-decoration: none; font-weight: 700; padding: 0.85rem 1.6rem; border-radius: 999px; }
-    .hero .cta:hover { background: var(--roble-verde-oscuro); }
+    .hero .eyebrow-hero { display: inline-block; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.3); padding: 0.35rem 0.8rem; border-radius: 999px; margin-bottom: 1rem; backdrop-filter: blur(4px); }
+    .hero h1 { font-size: clamp(2.2rem, 5.4vw, 3.8rem); font-weight: 800; margin: 0 0 0.7rem; line-height: 1.05; max-width: 620px; }
+    .hero p { font-size: 1.05rem; max-width: 470px; color: #f1efe8; margin: 0 0 1.5rem; line-height: 1.55; }
+    .hero-ctas { display: flex; gap: 0.7rem; flex-wrap: wrap; margin-bottom: 1.8rem; }
+    .hero .cta { display: inline-block; background: var(--roble-verde); color: #fff; text-decoration: none; font-weight: 700; padding: 0.9rem 1.6rem; border-radius: 999px; border: 1px solid var(--roble-verde); transition: background 0.2s, transform 0.2s; }
+    .hero .cta:hover { background: var(--roble-verde-oscuro); transform: translateY(-2px); }
+    .hero .cta.claro { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.65); backdrop-filter: blur(4px); }
+    .hero .cta.claro:hover { background: #fff; color: var(--roble-negro); }
+    .hero-colores-label { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; color: #e8e5dc; margin: 0 0 0.6rem; }
+    .hero-colores { display: flex; gap: 0.5rem; flex-wrap: wrap; max-width: 480px; }
+    .hero-swatch {
+      width: 30px; height: 30px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.75); cursor: pointer; padding: 0;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hero-swatch:hover, .hero-swatch:focus-visible { transform: scale(1.18); box-shadow: 0 0 0 3px rgba(255,255,255,0.35); outline: none; }
+
+    /* ===== Compra rápida: todos los colores a la vista, talla y "Agregar" en la misma tarjeta ===== */
+    .tienda-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.6rem; }
+    .tienda-head h2 { font-size: 1.9rem; margin: 0 0 0.3rem; }
+    .tienda-head p { margin: 0; color: var(--roble-texto-suave); }
+    .tabs { display: inline-flex; background: var(--roble-crema); border: 1px solid var(--roble-borde); border-radius: 999px; padding: 4px; }
+    .tab { border: none; background: transparent; padding: 0.6rem 1.2rem; border-radius: 999px; font: inherit; font-weight: 700; font-size: 0.9rem; cursor: pointer; color: var(--roble-texto-suave); transition: background 0.2s, color 0.2s; }
+    .tab.activa { background: var(--roble-negro); color: #fff; }
+    .tienda-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 1.4rem; }
+    .qs-card { background: #fff; border: 1px solid var(--roble-borde); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: box-shadow 0.25s, transform 0.25s; animation: aparecer 0.45s ease both; }
+    .qs-card:hover { box-shadow: 0 14px 34px rgba(20,20,15,0.13); transform: translateY(-3px); }
+    @keyframes aparecer { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    .qs-foto { position: relative; aspect-ratio: 3 / 4; overflow: hidden; background: var(--roble-crema); cursor: pointer; border: none; padding: 0; display: block; width: 100%; }
+    .qs-foto img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .qs-card:hover .qs-foto img { transform: scale(1.05); }
+    .qs-ver { position: absolute; left: 50%; bottom: 0.8rem; transform: translate(-50%, 6px); opacity: 0; background: rgba(255,255,255,0.92); color: var(--roble-negro); font-size: 0.78rem; font-weight: 700; padding: 0.4rem 0.8rem; border-radius: 999px; transition: opacity 0.25s, transform 0.25s; white-space: nowrap; }
+    .qs-card:hover .qs-ver { opacity: 1; transform: translate(-50%, 0); }
+    .qs-info { padding: 0.9rem 1rem 1rem; display: flex; flex-direction: column; gap: 0.6rem; flex: 1; }
+    .qs-titulo { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+    .qs-titulo b { font-size: 0.98rem; }
+    .qs-punto { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.15); flex: 0 0 auto; }
+    .qs-precio { font-weight: 700; color: var(--roble-verde); font-size: 0.92rem; }
+    .qs-tallas { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+    .qs-talla { border: 1px solid var(--roble-borde); background: #fff; min-width: 36px; padding: 0.35rem 0.4rem; border-radius: 7px; font: inherit; font-size: 0.78rem; font-weight: 600; cursor: pointer; }
+    .qs-talla.activo { background: var(--roble-negro); color: #fff; border-color: var(--roble-negro); }
+    .qs-agregar { margin-top: auto; width: 100%; border: none; background: var(--roble-verde); color: #fff; font: inherit; font-weight: 700; padding: 0.7rem; border-radius: 10px; cursor: pointer; transition: background 0.2s; }
+    .qs-agregar:hover { background: var(--roble-verde-oscuro); }
+    .qs-agregar.hecho { background: var(--roble-negro); }
+
+    /* Aviso al agregar al carrito (en vez de abrir el panel en cada clic) */
+    .toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 140%); background: var(--roble-negro); color: #fff; padding: 0.75rem 0.8rem 0.75rem 1.1rem; border-radius: 14px; display: flex; align-items: center; gap: 0.9rem; z-index: 160; box-shadow: 0 12px 30px rgba(0,0,0,0.25); transition: transform 0.35s cubic-bezier(.2,.9,.3,1.2); font-size: 0.9rem; max-width: calc(100vw - 32px); }
+    .toast.visible { transform: translate(-50%, 0); }
+    .toast button { border: none; background: var(--roble-verde); color: #fff; font: inherit; font-weight: 700; padding: 0.5rem 0.9rem; border-radius: 9px; cursor: pointer; white-space: nowrap; }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-panel img, .qs-card, .qs-foto img, .toast { transition: none; animation: none; }
+    }
 
     /* ===== Sección producto ===== */
     .page { max-width: 1200px; margin: 0 auto; padding: 3.5rem 1.5rem; }
 
-    /* ===== Home del catálogo: solo 2 recuadros (Hombre / Mujer) =====
-       Vista por defecto de la página principal (2026-09-29): reemplaza la visualización directa
-       de colores/tallas/detalle. Al hacer clic en un recuadro, rutear() (ver <script> al final)
-       oculta este bloque y muestra el .producto-detalle correspondiente, reutilizando el mismo
-       diseño y lógica de colores/tallas que ya existía -- no se tocó esa parte. */
-    .catalogo-home { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-    @media (max-width: 720px) { .catalogo-home { grid-template-columns: 1fr; } }
-    .categoria-card {
-      display: block; position: relative; border-radius: 16px; overflow: hidden;
-      background: var(--roble-crema); border: 1px solid var(--roble-borde); text-decoration: none;
-      color: inherit; transition: box-shadow 0.25s, transform 0.25s;
-    }
-    .categoria-card:hover { box-shadow: 0 14px 34px rgba(20,20,15,0.15); transform: translateY(-3px); }
-    .categoria-card img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; background: var(--roble-crema); }
-    .categoria-card .categoria-info { padding: 1.3rem 1.5rem; }
-    .categoria-card h2 { font-size: 1.5rem; margin: 0 0 0.4rem; }
-    .categoria-card .categoria-cta { font-size: 0.82rem; font-weight: 700; color: var(--roble-verde); text-transform: uppercase; letter-spacing: 0.08em; }
+    #catalogo { scroll-margin-top: 90px; }
 
     /* Vista de detalle (una línea de producto completa: galería + colores + tallas + carrito):
        oculta por defecto, solo se muestra la que corresponde al recuadro que se haya elegido. */
     /* scroll-margin-top: el header es sticky (~64px) -- sin esto, rutear() (ver <script> al
-       final) deja el link "Volver a categorías" tapado justo debajo del header al saltar aquí. */
+       final) deja el link "Volver a la tienda" tapado justo debajo del header al saltar aquí. */
     .producto-detalle { display: none; scroll-margin-top: 90px; }
     .producto-detalle.activa { display: block; }
     .volver-link {
@@ -157,8 +207,8 @@
         <span class="wordmark">ROBLE</span>
       </a>
       <nav class="site-nav">
-        <a href="#camisa-oxford">Hombre</a>
-        <a href="#camisa-crop">Mujer</a>
+        <a href="#catalogo" onclick="return irATienda('crop')">Mujer</a>
+        <a href="#catalogo" onclick="return irATienda('oxford')">Hombre</a>
         <a href="#mayoreo">Al por mayor</a>
         <a href="#contacto">Contacto</a>
       </nav>
@@ -181,39 +231,45 @@
   </div>
 
   <section class="hero" id="inicio">
-    <img src="imagenes/hero-roble.jpg" alt="Camisas ROBLE">
+    <div class="hero-fondo" aria-hidden="true">
+      <div class="hero-panel"></div>
+      <div class="hero-panel"></div>
+      <div class="hero-panel"></div>
+    </div>
     <div class="hero-contenido">
+      <span class="eyebrow-hero">Nueva colección Crop</span>
       <h1>Camisas atemporales,<br>hechas para durar.</h1>
-      <p>Corte clásico para hombre y crop moderno para mujer. Un color para cada ocasión — ROBLE es la camisa que no pasa de moda.</p>
-      <a class="cta" href="#catalogo">Ver la colección</a>
+      <p>Crop moderno para mujer y corte clásico para hombre. Elige tu color, tu talla y listo.</p>
+      <div class="hero-ctas">
+        <a class="cta" href="#catalogo" onclick="return irATienda('crop')">Comprar Mujer</a>
+        <a class="cta claro" href="#catalogo" onclick="return irATienda('oxford')">Comprar Hombre</a>
+      </div>
+      <p class="hero-colores-label" id="hero-colores-label">Toca un color para verlo y comprarlo</p>
+      <div class="hero-colores" id="hero-colores"></div>
     </div>
   </section>
 
   <main class="page">
 
-    <!-- Home del catálogo: únicamente estos 2 recuadros a la vista, sin colores/tallas/detalle
-         directo (ver CSS .catalogo-home y rutear() en el <script> final). Las imágenes se
-         completan por JS con la primera foto de cada línea de producto (PRODUCTOS.oxford/crop),
-         reutilizando los mismos datos en vez de duplicarlos a mano. -->
-    <div class="catalogo-home" id="catalogo">
-      <a class="categoria-card" href="#camisa-oxford">
-        <img id="cat-card-img-oxford" src="" alt="Camisas de Hombre ROBLE">
-        <div class="categoria-info">
-          <h2>Camisas de Hombre</h2>
-          <span class="categoria-cta">Ver colores y tallas →</span>
+    <!-- Compra rápida: cada color es una tarjeta con su talla y botón "Agregar" (ver
+         renderTienda() en el <script>). La foto abre el detalle completo de esa línea con ese
+         color ya elegido. rutear() oculta este bloque cuando se muestra un detalle. -->
+    <section id="catalogo">
+      <div class="tienda-head">
+        <div>
+          <h2>Compra rápida</h2>
+          <p>Elige color y talla, y agrégala al carrito sin salir de aquí.</p>
         </div>
-      </a>
-      <a class="categoria-card" href="#camisa-crop">
-        <img id="cat-card-img-crop" src="" alt="Camisas de Mujer ROBLE">
-        <div class="categoria-info">
-          <h2>Camisas de Mujer</h2>
-          <span class="categoria-cta">Ver colores y tallas →</span>
+        <div class="tabs" role="tablist">
+          <button type="button" class="tab" id="tab-crop" role="tab" onclick="mostrarLinea('crop')">Mujer · Crop</button>
+          <button type="button" class="tab" id="tab-oxford" role="tab" onclick="mostrarLinea('oxford')">Hombre · Oxford</button>
         </div>
-      </a>
-    </div>
+      </div>
+      <div class="tienda-grid" id="tienda-grid"></div>
+    </section>
 
     <div class="producto-detalle" id="camisa-oxford">
-      <a class="volver-link" href="#catalogo">← Volver a categorías</a>
+      <a class="volver-link" href="#catalogo">← Volver a la tienda</a>
       <div class="linea-titulo">
         <h2>Camisa Oxford ROBLE</h2>
         <span class="genero-tag">Hombre</span>
@@ -253,7 +309,7 @@
     </div>
 
     <div class="producto-detalle" id="camisa-crop">
-      <a class="volver-link" href="#catalogo">← Volver a categorías</a>
+      <a class="volver-link" href="#catalogo">← Volver a la tienda</a>
       <div class="linea-titulo">
         <h2>Camisa Crop ROBLE</h2>
         <span class="genero-tag">Mujer</span>
@@ -339,6 +395,11 @@
   </main>
 
   <footer class="pie">ROBLE — Camisas atemporales.</footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <span id="toast-texto">Agregado al carrito</span>
+    <button type="button" onclick="toggleCart(true); ocultarToast()">Ver carrito</button>
+  </div>
 
   <a class="whatsapp-float" id="whatsapp-float" href="#" target="_blank" rel="noopener noreferrer" aria-label="Abrir WhatsApp">
     <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M17.6 6.32A7.85 7.85 0 0012.05 4a7.94 7.94 0 00-7.94 7.94c0 1.4.37 2.77 1.07 3.97L4 20l4.2-1.1a7.93 7.93 0 003.85.98 7.94 7.94 0 007.94-7.94 7.9 7.9 0 00-2.39-5.62zM12.05 18.4a6.6 6.6 0 01-3.37-.92l-.24-.14-2.5.66.67-2.44-.16-.25a6.58 6.58 0 01-1.01-3.51 6.6 6.6 0 016.61-6.6 6.56 6.56 0 014.67 1.94 6.55 6.55 0 011.93 4.67 6.6 6.6 0 01-6.6 6.6zm3.61-4.94c-.2-.1-1.17-.58-1.35-.64-.18-.07-.31-.1-.45.1-.13.2-.51.64-.63.77-.11.13-.23.15-.43.05-.2-.1-.83-.31-1.58-.98-.58-.52-.98-1.16-1.09-1.36-.11-.2-.01-.3.09-.4.09-.09.2-.23.3-.35.1-.11.13-.2.2-.33.06-.13.03-.25-.02-.35-.05-.1-.45-1.08-.61-1.48-.16-.39-.33-.33-.45-.34-.11-.01-.25-.01-.38-.01-.13 0-.35.05-.53.25-.18.2-.7.68-.7 1.66s.72 1.93.82 2.06c.1.13 1.4 2.15 3.4 3.01.48.21.85.33 1.14.43.48.15.91.13 1.26.08.38-.06 1.17-.48 1.34-.94.16-.46.16-.86.11-.94-.05-.08-.18-.13-.38-.23z"/></svg>
@@ -467,7 +528,138 @@
         precioUnitario: p.precio,
         cantidad: qty
       });
-      if (typeof toggleCart === 'function') toggleCart(true);
+      avisarAgregado(p.nombre + ' · ' + color.nombre + ' · talla ' + est.tallaActiva);
+    }
+
+    // ============ AVISO "AGREGADO" ============
+    let temporizadorToast = null;
+    function avisarAgregado(texto) {
+      document.getElementById('toast-texto').textContent = '✓ ' + texto;
+      document.getElementById('toast').classList.add('visible');
+      clearTimeout(temporizadorToast);
+      temporizadorToast = setTimeout(ocultarToast, 4000);
+    }
+    function ocultarToast() { document.getElementById('toast').classList.remove('visible'); }
+
+    // ============ COMPRA RÁPIDA ============
+    let lineaTienda = 'crop';
+    const tallaRapida = {};   // talla elegida por tarjeta: { 'crop-3': 'S', ... }
+
+    function renderTienda() {
+      const p = PRODUCTOS[lineaTienda];
+      document.getElementById('tienda-grid').innerHTML = p.colores.map((c, i) => {
+        const clave = lineaTienda + '-' + i;
+        const talla = tallaRapida[clave] || 'M';
+        return '<article class="qs-card" style="animation-delay:' + (i * 0.04).toFixed(2) + 's">' +
+          '<button type="button" class="qs-foto" onclick="abrirDetalle(\'' + lineaTienda + '\',' + i + ')" aria-label="Ver detalle ' + c.nombre + '">' +
+            '<img src="' + c.img + '" alt="' + p.nombre + ' color ' + c.nombre + '" loading="lazy">' +
+            '<span class="qs-ver">Ver detalle</span>' +
+          '</button>' +
+          '<div class="qs-info">' +
+            '<div class="qs-titulo"><b>' + c.nombre + '</b><span class="qs-punto" style="background:' + c.hex + '"></span></div>' +
+            '<span class="qs-precio">' + formatCOP(p.precio) + '</span>' +
+            '<div class="qs-tallas">' + p.tallas.map((t) =>
+              '<button type="button" class="qs-talla' + (t === talla ? ' activo' : '') + '" onclick="elegirTallaRapida(\'' + clave + '\',\'' + t + '\')">' + t + '</button>'
+            ).join('') + '</div>' +
+            '<button type="button" class="qs-agregar" onclick="agregarRapido(\'' + lineaTienda + '\',' + i + ',this)">Agregar al carrito</button>' +
+          '</div>' +
+        '</article>';
+      }).join('');
+    }
+
+    function elegirTallaRapida(clave, talla) {
+      tallaRapida[clave] = talla;
+      const [key, i] = clave.split('-');
+      const tarjeta = document.querySelectorAll('#tienda-grid .qs-card')[Number(i)];
+      if (key === lineaTienda && tarjeta) {
+        tarjeta.querySelectorAll('.qs-talla').forEach((b) => b.classList.toggle('activo', b.textContent === talla));
+      }
+    }
+
+    function agregarRapido(key, i, boton) {
+      const p = PRODUCTOS[key], color = p.colores[i];
+      const talla = tallaRapida[key + '-' + i] || 'M';
+      window.addToCart({ codigo: p.codigo, nombre: p.nombre, img: color.img, talla, color: color.nombre, precioUnitario: p.precio, cantidad: 1 });
+      boton.textContent = '✓ Agregada';
+      boton.classList.add('hecho');
+      setTimeout(() => { boton.textContent = 'Agregar al carrito'; boton.classList.remove('hecho'); }, 1600);
+      avisarAgregado(p.nombre + ' · ' + color.nombre + ' · talla ' + talla);
+    }
+
+    function mostrarLinea(key) {
+      lineaTienda = key;
+      ['crop', 'oxford'].forEach((k) => {
+        const tab = document.getElementById('tab-' + k);
+        tab.classList.toggle('activa', k === key);
+        tab.setAttribute('aria-selected', k === key ? 'true' : 'false');
+      });
+      renderTienda();
+    }
+
+    // Menú y botones del hero: muestran la tienda en la línea pedida (saliendo del detalle si hace falta).
+    function irATienda(key) {
+      mostrarLinea(key);
+      if (location.hash !== '#catalogo') history.pushState(null, '', '#catalogo');
+      rutear();
+      document.getElementById('catalogo').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return false;
+    }
+
+    function abrirDetalle(key, i) {
+      elegirColor(key, i);
+      location.hash = 'camisa-' + key;
+    }
+
+    // ============ HERO: fotos de la colección Crop rotando de fondo ============
+    const FOTOS_HERO = PRODUCTOS.crop.colores.map((c) => c.img);
+    let pausaHero = false;
+
+    function ponerFotoEnPanel(panel, src) {
+      const actual = panel.querySelector('img.visible');
+      if (actual && actual.getAttribute('src') === src) return;
+      const nueva = document.createElement('img');
+      nueva.alt = '';
+      nueva.onload = () => {
+        requestAnimationFrame(() => nueva.classList.add('visible'));
+        if (actual) { actual.classList.remove('visible'); setTimeout(() => actual.remove(), 1500); }
+      };
+      nueva.src = src;
+      panel.appendChild(nueva);
+    }
+
+    function iniciarHero() {
+      const paneles = [...document.querySelectorAll('.hero-panel')];
+      const idx = [0, 1, 4];   // fotos iniciales de colores bien distintos (negro, rosado, verde bosque)
+      paneles.forEach((pan, k) => ponerFotoEnPanel(pan, FOTOS_HERO[idx[k]]));
+      let turno = 0;
+      const reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reducido) return;
+      setInterval(() => {
+        if (pausaHero || document.hidden) return;
+        const enMovil = window.matchMedia('(max-width: 760px)').matches;
+        const k = enMovil ? 0 : turno % 3;
+        let siguiente = (Math.max(...idx) + 1) % FOTOS_HERO.length;
+        while (idx.includes(siguiente)) siguiente = (siguiente + 1) % FOTOS_HERO.length;
+        idx[k] = siguiente;
+        ponerFotoEnPanel(paneles[k], FOTOS_HERO[siguiente]);
+        turno++;
+      }, 3200);
+
+      // Botones de color del hero: al pasar el mouse muestran esa foto; al tocar, abren el detalle.
+      const cont = document.getElementById('hero-colores');
+      cont.innerHTML = PRODUCTOS.crop.colores.map((c, i) =>
+        '<button type="button" class="hero-swatch" style="background:' + c.hex + '" title="' + c.nombre + '" aria-label="Comprar Crop color ' + c.nombre + '" ' +
+        'onmouseenter="previsualizarHero(' + i + ')" onfocus="previsualizarHero(' + i + ')" onclick="abrirDetalle(\'crop\',' + i + ')"></button>'
+      ).join('');
+      cont.addEventListener('mouseleave', () => { pausaHero = false; document.getElementById('hero-colores-label').textContent = 'Toca un color para verlo y comprarlo'; });
+    }
+
+    function previsualizarHero(i) {
+      pausaHero = true;
+      const enMovil = window.matchMedia('(max-width: 760px)').matches;
+      const panel = document.querySelectorAll('.hero-panel')[enMovil ? 0 : 1];
+      ponerFotoEnPanel(panel, FOTOS_HERO[i]);
+      document.getElementById('hero-colores-label').textContent = 'Crop ' + PRODUCTOS.crop.colores[i].nombre + ' — toca para comprarla';
     }
 
     function actualizarLinksWhatsapp(key) {
@@ -524,7 +716,7 @@
       return false;
     }
 
-    // ============ HOME DEL CATÁLOGO: solo 2 recuadros, navegación por hash ============
+    // ============ NAVEGACIÓN POR HASH: compra rápida o detalle de una línea ============
     // La vista de detalle completa (galería/colores/tallas/carrito) de cada línea de producto
     // NO se tocó -- sigue siendo exactamente la misma, solo que ahora empieza oculta
     // (.producto-detalle sin la clase .activa) y rutear() decide cuál mostrar según el hash de
@@ -557,14 +749,13 @@
       document.getElementById('prod-precio-' + key).textContent = formatCOP(PRODUCTOS[key].precio) + ' / unidad';
       actualizarLinksWhatsapp(key);
       document.getElementById('prod-qty-' + key).addEventListener('input', () => actualizarLinksWhatsapp(key));
-      // Imagen de los recuadros de categoría: la primera foto de cada línea de producto, misma
-      // fuente de datos que la galería de detalle (sin duplicar rutas de imágenes a mano).
-      document.getElementById('cat-card-img-' + key).src = PRODUCTOS[key].colores[0].img;
     });
+    mostrarLinea('crop');
+    iniciarHero();
     document.getElementById('whatsapp-float').href = 'https://wa.me/' + WHATSAPP_ROBLE;
     document.getElementById('contacto-whatsapp-txt').textContent = '+' + WHATSAPP_ROBLE;
     calcularMayoreo();
-    rutear(); // vista inicial: detalle si la URL ya trae #camisa-oxford/#camisa-crop, si no, los 2 recuadros
+    rutear(); // vista inicial: detalle si la URL ya trae #camisa-oxford/#camisa-crop, si no, la compra rápida
   </script>
 </body>
 </html>
