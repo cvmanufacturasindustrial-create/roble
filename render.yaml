@@ -9,3 +9,10 @@ services:
     buildCommand: npm install
     startCommand: npm start
     autoDeploy: true
+      envVars:
+          - key: SITIO_URL
+                value: https://camisainforoble.com
+                    - key: MP_ACCESS_TOKEN
+                          value: APP_USR-4889999079689323-021716-f1ffe99d6a2005dcd2cfa1c6c4209955-3088343606
+                              - key: MP_WEBHOOK_SECRET
+                                    value: ${MP_WEBHOOK_SECRET}
