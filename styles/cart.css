@@ -59,3 +59,15 @@
 @media (max-width: 480px) {
   .cart-panel { right: 12px; left: 12px; width: auto; }
 }
+
+/* ===== Pago con Mercado Pago ===== */
+.cart-entrega { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.3rem; }
+.cart-entrega-titulo { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #5c5a52; }
+.cart-entrega input { padding: 0.55rem 0.65rem; border: 1px solid #e6e3da; border-radius: 8px; font: inherit; font-size: 0.85rem; }
+.cart-entrega input:focus { outline: 2px solid #4a7c3f; outline-offset: -1px; }
+.cart-entrega-error { font-size: 0.78rem; color: #991b1b; min-height: 0; }
+.cart-btn-mp { background: #009ee3; color: #fff; border: none; border-radius: 10px; padding: 0.75rem; font-weight: 700; font-size: 0.92rem; cursor: pointer; }
+.cart-btn-mp:hover { background: #0086c3; }
+.cart-btn-mp:disabled { opacity: 0.7; cursor: wait; }
+.cart-mp-nota { font-size: 0.72rem; color: #5c5a52; text-align: center; margin-top: -0.2rem; }
+.cart-btn-pedir.secundario { background: #fff; color: #128c4b; border: 1px solid #25d366; }

@@ -750,6 +750,19 @@
     document.getElementById('contacto-whatsapp-txt').textContent = '+' + WHATSAPP_ROBLE;
     calcularMayoreo();
     rutear(); // vista inicial: detalle si la URL ya trae #camisa-oxford/#camisa-crop, si no, la compra rápida
+
+    // Precios oficiales: config/precios.json vía /api/precios (el mismo archivo con el que el
+    // servidor cobra en Mercado Pago). Los de PRODUCTOS quedan solo como respaldo.
+    fetch('/api/precios').then((r) => r.json()).then((precios) => {
+      ['oxford', 'crop'].forEach((key) => {
+        const p = precios[PRODUCTOS[key].codigo];
+        if (!p || !(p.precio > 0)) return;
+        PRODUCTOS[key].precio = p.precio;
+        document.getElementById('prod-precio-' + key).textContent = formatCOP(p.precio) + ' / unidad';
+      });
+      renderTienda();
+      calcularMayoreo();
+    }).catch(() => {});
   </script>
 </body>
 </html>

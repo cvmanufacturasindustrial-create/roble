@@ -6,3 +6,11 @@ datos/leads-recibidos.csv
 
 # Local Netlify folder
 .netlify
+
+# Pedidos web (PII): no versionable
+datos/pedidos-web.csv
+
+# Secretos
+.env
+.env.*
+!.env.example
