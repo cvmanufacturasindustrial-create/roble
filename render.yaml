@@ -1,0 +1,11 @@
+# Render Blueprint de ROBLE: un Web Service de Node que corre app.js (npm start).
+# En Render: New → Blueprint → elegir el repo "roble". El dominio propio se agrega después
+# en Settings → Custom Domains del servicio.
+services:
+  - type: web
+    name: roble
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true

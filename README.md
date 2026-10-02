@@ -13,6 +13,17 @@ npm start             # node app.js — sirve el sitio en http://localhost:3002
 PORT=3005 npm start   # otro puerto si lo necesitas
 ```
 
+## Publicación: Render + dominio en GoDaddy
+
+- **Render**: Web Service de Node (`render.yaml`): build `npm install`, start `npm start`.
+  Cada push a `main` en GitHub vuelve a publicar solo.
+- **Dominio** (comprado en GoDaddy): en Render → servicio → Settings → Custom Domains se
+  agregan el dominio raíz y `www`; en GoDaddy → DNS se ponen los registros que Render indica
+  (A del dominio raíz a la IP de Render y CNAME de `www` a `<servicio>.onrender.com`).
+- Solo `imagenes/`, `scripts/`, `styles/` e `index.html` son públicos (ver `app.js`).
+- En el plan gratis el disco se borra en cada deploy: `datos/leads-recibidos.csv` no es
+  permanente; el formulario cae a WhatsApp si el servidor no responde.
+
 ## ⚠️ Antes de publicarlo, todavía faltan 3 datos reales
 
 Las fotos reales ya están puestas para las dos líneas. Falta:
@@ -61,7 +72,7 @@ Si agregas o quitas colores, edita `PRODUCTOS.oxford.colores` / `PRODUCTOS.crop.
   (cada una con su propio precio), para quien solo quiere saber el precio de un pedido grande
   sin necesidad de agregarlo al carrito primero.
 - **Formulario de contacto** (`POST /api/lead`) que guarda en `datos/leads-recibidos.csv`; si
-  el sitio corre en un hosting estático sin backend (Netlify), cae automáticamente a abrir un
+  el servidor no responde, cae automáticamente a abrir un
   WhatsApp con los mismos datos.
 
 ## Estructura
