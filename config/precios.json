@@ -1,4 +1,8 @@
 {
-  "ROBLE-OXFORD": { "nombre": "Camisa Oxford ROBLE", "precio": 89000 },
+  "ROBLE-OXFORD": {
+    "nombre": "Camisa Oxford ROBLE",
+    "precio": 89000,
+    "preciosPorColor": { "Blanco": 2000 }
+  },
   "ROBLE-CROP": { "nombre": "Camisa Crop ROBLE", "precio": 89000 }
 }

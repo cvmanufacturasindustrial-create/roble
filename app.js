@@ -63,6 +63,11 @@ function limitarPeticiones({ maxPeticiones, ventanaMs }) {
 // El servidor NUNCA cobra el precio que manda el navegador: lo recalcula desde este archivo.
 const RUTA_PRECIOS = path.join(__dirname, 'config', 'precios.json');
 function leerPrecios() { return JSON.parse(fs.readFileSync(RUTA_PRECIOS, 'utf8')); }
+// Precio de un color: el de `preciosPorColor` si existe (excepciones puntuales), si no el de la línea.
+function precioDe(prod, color) {
+  const especial = prod.preciosPorColor && prod.preciosPorColor[color];
+  return especial > 0 ? especial : prod.precio;
+}
 function descuentoVolumen(unidades) { return unidades >= 100 ? 0.10 : unidades >= 50 ? 0.05 : 0; }
 
 app.get('/api/precios', (_req, res) => {
@@ -110,7 +115,7 @@ app.post('/api/pago/mercadopago/preferencia', limitarPago, async (req, res) => {
     id: l.codigo,
     title: l.prod.nombre + (l.color ? ' · ' + l.color : '') + (l.talla ? ' · Talla ' + l.talla : ''),
     quantity: l.cantidad,
-    unit_price: Math.round(l.prod.precio * (1 - desc)),
+    unit_price: Math.round(precioDe(l.prod, l.color) * (1 - desc)),
     currency_id: 'COP',
   }));
   const total = mpItems.reduce((s, i) => s + i.unit_price * i.quantity, 0);

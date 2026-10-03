@@ -476,6 +476,14 @@
         '<button type="button" class="swatch' + (i === est.colorIdx ? ' activo' : '') + '" style="background:' + c.hex + (c.hex === '#ffffff' ? ';border-color:#ccc' : '') + '" onclick="elegirColor(\'' + key + '\',' + i + ')" aria-label="' + c.nombre + '"></button>'
       ).join('');
       document.getElementById('color-nombre-' + key).textContent = p.colores[est.colorIdx].nombre;
+      document.getElementById('prod-precio-' + key).textContent = formatCOP(precioColor(key, est.colorIdx)) + ' / unidad';
+    }
+
+    // Precio de un color: excepción en preciosPorColor (config/precios.json) o el de la línea.
+    function precioColor(key, i) {
+      const p = PRODUCTOS[key];
+      const especial = p.preciosPorColor && p.preciosPorColor[p.colores[i].nombre];
+      return especial > 0 ? especial : p.precio;
     }
 
     function renderTallas(key) {
@@ -526,7 +534,7 @@
         img: color.img,
         talla: est.tallaActiva,
         color: color.nombre,
-        precioUnitario: p.precio,
+        precioUnitario: precioColor(key, est.colorIdx),
         cantidad: qty
       });
       avisarAgregado(p.nombre + ' · ' + color.nombre + ' · talla ' + est.tallaActiva);
@@ -558,7 +566,7 @@
           '</button>' +
           '<div class="qs-info">' +
             '<div class="qs-titulo"><b>' + c.nombre + '</b><span class="qs-punto" style="background:' + c.hex + '"></span></div>' +
-            '<span class="qs-precio">' + formatCOP(p.precio) + '</span>' +
+            '<span class="qs-precio">' + formatCOP(precioColor(lineaTienda, i)) + '</span>' +
             '<div class="qs-tallas">' + p.tallas.map((t) =>
               '<button type="button" class="qs-talla' + (t === talla ? ' activo' : '') + '" onclick="elegirTallaRapida(\'' + clave + '\',\'' + t + '\')">' + t + '</button>'
             ).join('') + '</div>' +
@@ -581,7 +589,7 @@
     function agregarRapido(key, i, boton) {
       const p = PRODUCTOS[key], color = p.colores[i];
       const talla = tallaRapida[key + '-' + i] || 'M';
-      window.addToCart({ codigo: p.codigo, nombre: p.nombre, img: color.img, talla, color: color.nombre, precioUnitario: p.precio, cantidad: 1 });
+      window.addToCart({ codigo: p.codigo, nombre: p.nombre, img: color.img, talla, color: color.nombre, precioUnitario: precioColor(key, i), cantidad: 1 });
       boton.textContent = '✓ Agregada';
       boton.classList.add('hecho');
       setTimeout(() => { boton.textContent = 'Agregar al carrito'; boton.classList.remove('hecho'); }, 1600);
@@ -592,13 +600,13 @@
     function comprarYa(key, i) {
       const p = PRODUCTOS[key], color = p.colores[i];
       const talla = tallaRapida[key + '-' + i] || 'M';
-      window.addToCart({ codigo: p.codigo, nombre: p.nombre, img: color.img, talla, color: color.nombre, precioUnitario: p.precio, cantidad: 1 });
+      window.addToCart({ codigo: p.codigo, nombre: p.nombre, img: color.img, talla, color: color.nombre, precioUnitario: precioColor(key, i), cantidad: 1 });
       irAPagar();
     }
     function comprarAhoraDetalle(key) {
       const p = PRODUCTOS[key], est = estado[key], color = p.colores[est.colorIdx];
       const qty = parseInt(document.getElementById('prod-qty-' + key).value, 10) || 1;
-      window.addToCart({ codigo: p.codigo, nombre: p.nombre, img: color.img, talla: est.tallaActiva, color: color.nombre, precioUnitario: p.precio, cantidad: qty });
+      window.addToCart({ codigo: p.codigo, nombre: p.nombre, img: color.img, talla: est.tallaActiva, color: color.nombre, precioUnitario: precioColor(key, est.colorIdx), cantidad: qty });
       irAPagar();
     }
 
@@ -762,7 +770,6 @@
       renderColores(key);
       renderTallas(key);
       renderGaleria(key);
-      document.getElementById('prod-precio-' + key).textContent = formatCOP(PRODUCTOS[key].precio) + ' / unidad';
       actualizarLinksWhatsapp(key);
       document.getElementById('prod-qty-' + key).addEventListener('input', () => actualizarLinksWhatsapp(key));
     });
@@ -780,7 +787,8 @@
         const p = precios[PRODUCTOS[key].codigo];
         if (!p || !(p.precio > 0)) return;
         PRODUCTOS[key].precio = p.precio;
-        document.getElementById('prod-precio-' + key).textContent = formatCOP(p.precio) + ' / unidad';
+        PRODUCTOS[key].preciosPorColor = p.preciosPorColor || null;
+        renderColores(key);
       });
       renderTienda();
       calcularMayoreo();

@@ -82,7 +82,10 @@
     let cambio = false;
     items.forEach((it) => {
       const p = precios[it.codigo];
-      if (p && p.precio !== it.precioUnitario) { it.precioUnitario = p.precio; cambio = true; }
+      if (!p) return;
+      const especial = p.preciosPorColor && p.preciosPorColor[it.color];
+      const precio = especial > 0 ? especial : p.precio;
+      if (precio !== it.precioUnitario) { it.precioUnitario = precio; cambio = true; }
     });
     if (cambio) localStorage.setItem(CLAVE_CARRITO, JSON.stringify(items));
     Cart.render();
